@@ -1,53 +1,61 @@
-//
+import 'dotenv/config';
 import express from 'express';
-import dotenv from 'dotenv';
-import conectarDB from './config/database.js';
+import cors from 'cors';
+import mongoose from 'mongoose';
+// Importar rutas existentes de usuarios (ruta correcta relativa a src/)
 import usuariosRoutes from './routes/usuarios.routes.js';
-import Usuario from './models/usuario.js'; // Ruta correcta según estructura
 
-
-dotenv.config();
-
-// Crear aplicación Express
+// Inicializar aplicación Express
 const app = express();
 
-// Conectar a la base de datos
-conectarDB();
+// CORS configuration: allow specific origins
+const allowedOrigins = [
+  'http://localhost:3000',
+  'http://localhost:3001',
+  'https://OkarRojas.github.io'
+];
 
-// Middlewares
-app.use(express.json()); // Parsear JSON en el body de las peticiones
-app.use(express.urlencoded({ extended: true })); // Parsear formularios
+app.use(
+  cors({
+    origin: (origin, callback) => {
+      if (!origin || allowedOrigins.includes(origin)) {
+        return callback(null, true);
+      }
+      return callback(new Error('Not allowed by CORS'));
+    },
+    credentials: true,
+  })
+);
+
+// Body parsing
+app.use(express.json());
+
+// Health check
+app.get('/api/health', (req, res) => {
+  res.status(200).json({ status: 'ok' });
+});
 
 // Rutas
 app.use('/api/usuarios', usuariosRoutes);
 
-// Ruta de prueba
-app.get('/', (req, res) => {
-  res.json({ 
-    mensaje: '¡Servidor funcionando!',
-    version: '1.0.0'
+// Conexión a MongoDB con Mongoose usando variables de entorno
+const mongoUri = process.env.MONGODB_URI || process.env.MONGO_URI;
+if (mongoUri) {
+  mongoose
+    .connect(mongoUri)
+    .then(() => console.log('✅ MongoDB conectado'))
+    .catch((err) => console.error('❌ Error conectando a MongoDB:', err.message));
+} else {
+  console.warn('⚠️  Variable de entorno MONGODB_URI/MONGO_URI no definida.');
+}
+
+// Iniciar servidor local solo si NO es producción
+if (process.env.NODE_ENV !== 'production') {
+  const PORT = process.env.PORT || 3001;
+  app.listen(PORT, () => {
+    console.log(`🚀 Servidor escuchando en http://localhost:${PORT}`);
   });
-});
+}
 
-// Manejo de rutas no encontradas
-app.use((req, res) => {
-  res.status(404).json({ 
-    error: 'Ruta no encontrada' 
-  });
-});
-
-// // Aquí defines el endpoint GET /usuarios
-// app.get('/usuarios', async (req, res) => {
-//   try {
-//     const usuarios = await Usuario.find();
-//     res.json(usuarios);
-//   } catch (error) {
-//     res.status(500).json({ mensaje: 'Error al obtener usuarios' });
-//   }
-// });
-
-// Iniciar servidor
-const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => {
-  console.log(`🚀 Servidor escuchando en el puerto ${PORT}`);
-});
+// Exportar app para despliegues serverless
+export default app;
