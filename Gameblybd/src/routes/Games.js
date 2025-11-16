@@ -1,5 +1,5 @@
 import express from 'express';
-import Juego from '../models/usuario.js';
+import Juego from '../models/juego.js';
 
 const router = express.Router();
 
