@@ -1,11 +1,11 @@
-//
 import express from 'express';
 import {
   obtenerUsuarios,
   obtenerUsuarioPorId,
   crearUsuario,
   actualizarUsuario,
-  eliminarUsuario} from '../controllers/usuarios.controller.js';
+  eliminarUsuario
+} from '../controllers/usuarios.controller.js';
 
 const router = express.Router();
 
@@ -17,3 +17,4 @@ router.put('/:id', actualizarUsuario);      // PUT /api/usuarios/:id
 router.delete('/:id', eliminarUsuario);     // DELETE /api/usuarios/:id
 
 export default router;
+  

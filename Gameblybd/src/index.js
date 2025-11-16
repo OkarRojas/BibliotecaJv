@@ -2,8 +2,9 @@ import 'dotenv/config';
 import express from 'express';
 import cors from 'cors';
 import mongoose from 'mongoose';
-// Importar rutas existentes de usuarios (ruta correcta relativa a src/)
+// Importar rutas
 import usuariosRoutes from './routes/usuarios.routes.js';
+import gamesRoutes from './routes/Games.js';
 
 // Inicializar aplicación Express
 const app = express();
@@ -37,6 +38,7 @@ app.get('/api/health', (req, res) => {
 
 // Rutas
 app.use('/api/usuarios', usuariosRoutes);
+app.use('/api/games', gamesRoutes);
 
 // Conexión a MongoDB con Mongoose usando variables de entorno
 const mongoUri = process.env.MONGODB_URI || process.env.MONGO_URI;

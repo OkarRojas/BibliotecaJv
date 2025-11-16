@@ -1,3 +1,4 @@
+import express from 'express';
 import Usuario from '../models/usuario.js';
 
 // Crear un nuevo usuario
@@ -166,3 +167,5 @@ export const eliminarVariosUsuarios = async (req, res) => {
     });
   }
 };
+
+
