@@ -32,7 +32,7 @@ const juegoSchema = new mongoose.Schema(
     plataforma: { 
       type: String,
       required: true,
-      enum: ['PC', 'PlayStation', 'Xbox', 'Nintendo', 'Mobile', 'Multiplataforma']
+      enum: ['PC', 'PlayStation', 'Xbox', 'Nintendo', 'Mobile', 'Multiplataforma', "PS4", "PS5"]
     },
     
     // Desarrolladora
